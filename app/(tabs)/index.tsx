@@ -13,6 +13,12 @@ export default function App() {
       <Link href="/onboarding" className="mt-4 rounded bg-primary p-4 text-white">
         Go to onboarding
       </Link>
+      <Link href="/(auth)/sign-up" className="mt-4 rounded bg-primary p-4 text-white">
+        Go to sign up
+      </Link>
+            <Link href="/(auth)/sign-in" className="mt-4 rounded bg-primary p-4 text-white">
+        Go to sign in
+      </Link>
       <Link href="/subscriptions/spotify">Spotify Subscription</Link>
       <Link
         href={{
