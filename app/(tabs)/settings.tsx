@@ -3,12 +3,14 @@ import { styled } from "nativewind";
 import React, { useState } from 'react';
 import { Pressable, Text } from 'react-native';
 import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
+import { usePostHog } from "posthog-react-native";
 const SafeAreaView = styled(RNSafeAreaView)
 
 
 const Settings = () => {
   const { signOut } = useAuth();
   const { user } = useUser();
+  const posthog = usePostHog();
   const [signingOut, setSigningOut] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
 
@@ -16,9 +18,11 @@ const Settings = () => {
     setSigningOut(true);
     setSignOutError(null);
     try {
+      posthog.capture('user_signed_out')
       await signOut();
     } catch (err) {
       setSignOutError(err instanceof Error ? err.message : "Something went wrong");
+      posthog.captureException(err instanceof Error ? err : new Error(String(err)))
     } finally {
       setSigningOut(false);
     }

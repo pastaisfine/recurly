@@ -1,10 +1,12 @@
 import "@/global.css";
-import { ClerkProvider, useAuth } from "@clerk/expo";
+import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
+import { SplashScreen, Stack, usePathname, useGlobalSearchParams } from "expo-router";
+import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { PostHogProvider } from "posthog-react-native";
+import { posthog } from "../src/config/posthog";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -14,6 +16,33 @@ if (!publishableKey) {
 
 function RootNavigator() {
   const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
+  const pathname = usePathname();
+  const params = useGlobalSearchParams();
+  const previousPathname = useRef<string | undefined>(undefined);
+
+  // Screen tracking for Expo Router
+  // @see https://posthog.com/docs/libraries/react-native
+  useEffect(() => {
+    if (previousPathname.current !== pathname) {
+      posthog.screen(pathname, {
+        previous_screen: previousPathname.current ?? null,
+        ...params,
+      })
+      previousPathname.current = pathname
+    }
+  }, [pathname, params])
+
+  // Identify user when Clerk auth state changes
+  useEffect(() => {
+    if (isSignedIn && user?.id) {
+      posthog.identify(user.id, {
+        $set: { email: user.primaryEmailAddress?.emailAddress },
+      })
+    } else if (!isSignedIn) {
+      posthog.reset()
+    }
+  }, [isSignedIn, user?.id, user?.primaryEmailAddress?.emailAddress])
 
   if (!isLoaded) {
     return (
@@ -57,7 +86,16 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <RootNavigator />
+      <PostHogProvider
+        client={posthog}
+        autocapture={{
+          captureScreens: false,
+          captureTouches: true,
+          propsToCapture: ['testID'],
+        }}
+      >
+        <RootNavigator />
+      </PostHogProvider>
     </ClerkProvider>
   );
 }
