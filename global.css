@@ -357,4 +357,112 @@
     .onboarding-button {
         @apply items-center rounded-full bg-primary px-10 py-4;
     }
+
+    .insight-header {
+        @apply mb-5;
+    }
+
+    .insight-title {
+        @apply text-2xl font-sans-bold text-primary;
+    }
+
+    .insight-grid {
+        @apply flex-row flex-wrap gap-4;
+    }
+
+    .insight-card {
+        @apply min-w-[46%] flex-1 rounded-2xl border border-border bg-card p-4;
+    }
+
+    .insight-card-accent {
+        @apply bg-accent;
+    }
+
+    .insight-label {
+        @apply text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .insight-label-light {
+        @apply text-white/80;
+    }
+
+    .insight-value {
+        @apply mt-1 text-2xl font-sans-extrabold text-primary;
+    }
+
+    .insight-value-light {
+        @apply text-white;
+    }
+
+    .insight-sub {
+        @apply mt-0.5 text-xs font-sans-medium text-muted-foreground;
+    }
+
+    .insight-section {
+        @apply mt-6 gap-3;
+    }
+
+    .insight-section-title {
+        @apply text-lg font-sans-bold text-primary;
+    }
+
+    .insight-bar-row {
+        @apply flex-row items-center gap-3;
+    }
+
+    .insight-bar-label {
+        @apply w-24 shrink-0 text-sm font-sans-semibold text-primary;
+    }
+
+    .insight-bar-track {
+        @apply h-3 flex-1 overflow-hidden rounded-full bg-muted;
+    }
+
+    .insight-bar-fill {
+        @apply h-full rounded-full bg-accent;
+    }
+
+    .insight-bar-value {
+        @apply w-24 shrink-0 text-right text-sm font-sans-semibold text-muted-foreground;
+    }
+
+    .insight-row {
+        @apply flex-row items-center gap-3 rounded-2xl border border-border bg-card p-4;
+    }
+
+    .insight-row-icon {
+        @apply size-12 rounded-lg;
+    }
+
+    .insight-row-main {
+        @apply min-w-0 flex-1;
+    }
+
+    .insight-row-name {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .insight-row-meta {
+        @apply text-sm font-sans-medium text-muted-foreground;
+    }
+
+    .insight-row-price {
+        @apply text-base font-sans-bold text-primary;
+    }
+
+    .status-chip-row {
+        @apply flex-row flex-wrap gap-2;
+    }
+
+    .status-chip {
+        @apply flex-1 items-center rounded-2xl border border-border bg-card p-4;
+    }
+
+    .status-chip-value {
+        @apply text-2xl font-sans-extrabold text-primary;
+    }
+
+    .status-chip-label {
+        @apply mt-0.5 text-sm font-sans-semibold text-muted-foreground;
+    }
 }
