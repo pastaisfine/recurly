@@ -326,6 +326,10 @@
         @apply items-center rounded-full bg-primary py-4;
     }
 
+    .auth-button-disabled {
+        @apply bg-primary/35;
+    }
+
     .auth-button-text {
         @apply font-sans-bold text-background;
     }
