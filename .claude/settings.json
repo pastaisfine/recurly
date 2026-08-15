@@ -1,6 +1,0 @@
-{
-  "css.lint.unknownAtRules": "ignore",
-  "enabledPlugins": {
-    "expo@claude-plugins-official": true
-  }
-}

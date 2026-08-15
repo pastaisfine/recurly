@@ -2,9 +2,11 @@ import { useSignIn } from "@clerk/expo";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
+import { usePostHog } from "posthog-react-native";
 
 const SignIn = () => {
   const { signIn } = useSignIn();
+  const posthog = usePostHog();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
@@ -18,6 +20,8 @@ const SignIn = () => {
       const { error } = await signIn.password({ emailAddress, password });
       if (error) {
         setError(error.longMessage || error.message);
+        posthog.capture('sign_in_failed', { method: 'password' })
+        posthog.captureException(new Error(error.longMessage || error.message))
         return;
       }
 
@@ -25,10 +29,16 @@ const SignIn = () => {
         const { error: finalizeError } = await signIn.finalize();
         if (finalizeError) {
           setError(finalizeError.longMessage || finalizeError.message);
+          posthog.capture('sign_in_failed', { method: 'password' })
+          posthog.captureException(new Error(finalizeError.longMessage || finalizeError.message))
+        } else {
+          posthog.capture('user_signed_in', { method: 'password' })
         }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      posthog.capture('sign_in_failed', { method: 'password' })
+      posthog.captureException(err instanceof Error ? err : new Error(String(err)))
     } finally {
       setPending(false);
     }

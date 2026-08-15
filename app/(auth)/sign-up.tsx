@@ -2,9 +2,11 @@ import { useSignUp } from "@clerk/expo";
 import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
+import { usePostHog } from "posthog-react-native";
 
 const SignUp = () => {
   const { signUp } = useSignUp();
+  const posthog = usePostHog();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
@@ -20,18 +22,25 @@ const SignUp = () => {
       const { error } = await signUp.password({ emailAddress, password });
       if (error) {
         setError(error.longMessage || error.message);
+        posthog.capture('sign_up_failed', { method: 'password', stage: 'registration' })
+        posthog.captureException(new Error(error.longMessage || error.message))
         return;
       }
 
       const { error: sendError } = await signUp.verifications.sendEmailCode();
       if (sendError) {
         setError(sendError.longMessage || sendError.message);
+        posthog.capture('sign_up_failed', { method: 'password', stage: 'email_verification_send' })
+        posthog.captureException(new Error(sendError.longMessage || sendError.message))
         return;
       }
 
+      posthog.capture('email_verification_sent', { method: 'password' })
       setIsVerifying(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      posthog.capture('sign_up_failed', { method: 'password', stage: 'registration' })
+      posthog.captureException(err instanceof Error ? err : new Error(String(err)))
     } finally {
       setPending(false);
     }
@@ -45,18 +54,25 @@ const SignUp = () => {
       const { error } = await signUp.verifications.verifyEmailCode({ code });
       if (error) {
         setError(error.longMessage || error.message);
+        posthog.capture('sign_up_failed', { method: 'password', stage: 'email_verification' })
+        posthog.captureException(new Error(error.longMessage || error.message))
         return;
       }
 
       const { error: finalizeError } = await signUp.finalize();
       if (finalizeError) {
         setError(finalizeError.longMessage || finalizeError.message);
+        posthog.capture('sign_up_failed', { method: 'password', stage: 'finalize' })
+        posthog.captureException(new Error(finalizeError.longMessage || finalizeError.message))
         return;
       }
 
+      posthog.capture('user_signed_up', { method: 'password' })
       router.replace("/onboarding");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      posthog.capture('sign_up_failed', { method: 'password', stage: 'verification' })
+      posthog.captureException(err instanceof Error ? err : new Error(String(err)))
     } finally {
       setPending(false);
     }
