@@ -1,8 +1,43 @@
-# Welcome to your Expo app 👋
+# React Native Recurly
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A subscription tracking & management mobile app built with **React Native + Expo** (SDK 54). It helps users track their recurring subscriptions, upcoming renewals, and monthly/yearly spending, with analytics and a polished NativeWind-styled UI.
 
-## Get started
+## What this app does
+
+- **Authentication** via [Clerk](https://clerk.com) — email + password sign up (with email verification) and sign in, gated behind protected routes.
+- **Home dashboard** — shows the user's balance, a horizontal list of **upcoming renewals**, and an expandable list of **all subscriptions**. A modal lets you add a new subscription (name, price, monthly/yearly frequency, and category).
+- **Subscriptions** — a searchable, filterable list of all subscriptions.
+- **Insights** — computed analytics: monthly/yearly spend, active subscription count, most expensive subscription, spend by category, monthly/yearly billing split, spend by subscription, and a status breakdown (active / paused / cancelled).
+- **Settings** — displays the signed-in account and provides sign out.
+- **Product analytics** via [PostHog](https://posthog.com) — screen tracking and custom events for sign-in, sign-up, subscription creation, expansion, and onboarding, with automatic user identification tied to Clerk user IDs.
+
+> Note: Subscription data is currently backed by **mock/hardcoded data** in `constants/data.ts` rather than a backend.
+
+## Tech stack
+
+- **Expo SDK 54** with [Expo Router](https://docs.expo.dev/router/introduction) (file-based routing) and typed routes
+- **React Native 0.81** + React 19
+- **NativeWind / Tailwind CSS** (v4) for styling
+- **Clerk Expo** for authentication (`expo-secure-store` for token cache)
+- **PostHog React Native** for analytics
+- **dayjs** for date handling
+
+## Project structure
+
+```
+app/
+  _layout.tsx          Root layout (Clerk + PostHog providers, protected routes)
+  (auth)/              Sign in / sign up screens
+  (tabs)/              Bottom-tab navigator (Home, Subscriptions, Insights, Settings)
+  onboarding.tsx       Post-signup onboarding
+  component/           Reusable UI (SubscriptionCard, CreateSubscriptionModal, etc.)
+  subscriptions/[id]   Subscription detail screen
+constants/             Tabs, mock data, icons, images, theme
+src/config/posthog.ts  PostHog client configuration
+lib/utils.ts           Formatting helpers (currency, dates, status labels)
+```
+
+## Getting started
 
 1. Install dependencies
 
@@ -10,41 +45,34 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Create a `.env` file with your keys (see `.env.example`):
+
+   ```
+   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=...
+   POSTHOG_PROJECT_TOKEN=...
+   POSTHOG_HOST=https://us.i.posthog.com
+   ```
+
+3. Start the app
 
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+   Then press a key to open on a development build, Android/iOS emulator, or [Expo Go](https://expo.dev/go).
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Available scripts
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- `npm start` — start the Expo dev server
+- `npm run android` — start on Android
+- `npm run ios` — start on iOS
+- `npm run web` — start on web
+- `npm run lint` — run ESLint
+- `npm run reset-project` — reset to the blank starter template
 
 ## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Expo documentation](https://docs.expo.dev/)
+- [Expo Router](https://docs.expo.dev/router/introduction)
+- [Clerk for Expo](https://clerk.com/docs)
+- [PostHog React Native](https://posthog.com/docs/libraries/react-native)
