@@ -12,13 +12,13 @@ const Onboarding = () => {
   }
 
   return (
-    <View className="flex-1 items-center justify-center gap-6 bg-background p-6">
-      <Text className="text-2xl font-sans-bold text-primary">Get started</Text>
+    <View className="onboarding-container">
+      <Text className="screen-title">Get started</Text>
       <Pressable
         onPress={handleContinue}
-        className="items-center rounded-full bg-primary px-10 py-4"
+        className="onboarding-button"
       >
-        <Text className="font-sans-bold text-background">Continue</Text>
+        <Text className="auth-button-text">Continue</Text>
       </Pressable>
     </View>
   )
