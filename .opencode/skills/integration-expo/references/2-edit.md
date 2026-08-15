@@ -13,7 +13,7 @@ For each event, add useful properties, and use your access to the PostHog source
 
 Remember that you can find the source code for any dependency in the node_modules directory. This may be necessary to properly populate property names. There are also example project code files available via the PostHog MCP; use these for reference.
 
-Never send the raw contents of login or signup forms — especially passwords or tokens. Where possible, add calls for PostHog's identify() function on the client side after successful authentication (logins and signups), using the user's stable account ID and only approved, non-secret properties. If there is server-side code, propagate the client-side session and distinct ID to it and use the same verified ID so events from both domains correlate. 
+Never send the raw contents of login or signup forms — especially passwords or tokens. Where possible, add calls for PostHog's identify() function on the client side after successful authentication (logins and signups), using the user's stable account ID and only approved, non-secret properties. If there is server-side code, propagate the client-side session and distinct ID to it and use the same verified ID so events from both domains correlate. Derive or verify the PostHog distinct ID and session ID from the authenticated backend session, not from client-supplied identity headers (e.g., X-POSTHOG-DISTINCT-ID and X-POSTHOG-SESSION-ID, which can be spoofed); preserve correlation only when the verified identity is used. 
 
 It's essential to do this in both client code and server code, so that user behavior from both domains is easy to correlate.
 
