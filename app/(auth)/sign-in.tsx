@@ -14,21 +14,24 @@ const SignIn = () => {
     setPending(true);
     setError(null);
 
-    const { error } = await signIn.password({ emailAddress, password });
-    if (error) {
-      setError(error.longMessage || error.message);
-      setPending(false);
-      return;
-    }
-
-    if (signIn.status === "complete") {
-      const { error: finalizeError } = await signIn.finalize();
-      if (finalizeError) {
-        setError(finalizeError.longMessage || finalizeError.message);
+    try {
+      const { error } = await signIn.password({ emailAddress, password });
+      if (error) {
+        setError(error.longMessage || error.message);
+        return;
       }
-    }
 
-    setPending(false);
+      if (signIn.status === "complete") {
+        const { error: finalizeError } = await signIn.finalize();
+        if (finalizeError) {
+          setError(finalizeError.longMessage || finalizeError.message);
+        }
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setPending(false);
+    }
   };
 
   return (

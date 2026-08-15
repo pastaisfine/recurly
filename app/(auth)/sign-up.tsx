@@ -16,44 +16,50 @@ const SignUp = () => {
     setPending(true);
     setError(null);
 
-    const { error } = await signUp.password({ emailAddress, password });
-    if (error) {
-      setError(error.longMessage || error.message);
-      setPending(false);
-      return;
-    }
+    try {
+      const { error } = await signUp.password({ emailAddress, password });
+      if (error) {
+        setError(error.longMessage || error.message);
+        return;
+      }
 
-    const { error: sendError } = await signUp.verifications.sendEmailCode();
-    if (sendError) {
-      setError(sendError.longMessage || sendError.message);
-      setPending(false);
-      return;
-    }
+      const { error: sendError } = await signUp.verifications.sendEmailCode();
+      if (sendError) {
+        setError(sendError.longMessage || sendError.message);
+        return;
+      }
 
-    setPending(false);
-    setIsVerifying(true);
+      setIsVerifying(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setPending(false);
+    }
   };
 
   const handleVerify = async () => {
     setPending(true);
     setError(null);
 
-    const { error } = await signUp.verifications.verifyEmailCode({ code });
-    if (error) {
-      setError(error.longMessage || error.message);
-      setPending(false);
-      return;
-    }
+    try {
+      const { error } = await signUp.verifications.verifyEmailCode({ code });
+      if (error) {
+        setError(error.longMessage || error.message);
+        return;
+      }
 
-    const { error: finalizeError } = await signUp.finalize();
-    if (finalizeError) {
-      setError(finalizeError.longMessage || finalizeError.message);
-      setPending(false);
-      return;
-    }
+      const { error: finalizeError } = await signUp.finalize();
+      if (finalizeError) {
+        setError(finalizeError.longMessage || finalizeError.message);
+        return;
+      }
 
-    setPending(false);
-    router.replace("/onboarding");
+      router.replace("/onboarding");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
