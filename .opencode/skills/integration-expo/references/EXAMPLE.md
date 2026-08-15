@@ -109,7 +109,7 @@ npx expo run:android
 
 ### Configuration
 
-PostHog is configured in `src/config/posthog.ts` using environment variables from `app.json`:
+PostHog is configured in `src/config/posthog.ts` using environment variables from `app.config.js`:
 
 ```typescript
 import Constants from 'expo-constants'
@@ -303,7 +303,7 @@ export default {
 ## app/_layout.tsx
 
 ```tsx
-import { Stack, usePathname, useGlobalSearchParams } from 'expo-router'
+import { Stack, usePathname } from 'expo-router'
 import { useEffect, useRef } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { PostHogProvider } from 'posthog-react-native'
@@ -316,22 +316,21 @@ import { colors } from '../src/styles/theme'
 
 export default function RootLayout() {
   const pathname = usePathname()
-  const params = useGlobalSearchParams()
   const previousPathname = useRef<string | undefined>(undefined)
 
   // Manual screen tracking for Expo Router
   // @see https://docs.expo.dev/router/reference/screen-tracking/
   // React Compiler will auto-optimize this effect
+  // Track only a fixed, non-sensitive screen name and an allowlist of approved
+  // properties — never spread route or query params (e.g. ids) into the event.
   useEffect(() => {
     if (previousPathname.current !== pathname) {
       posthog.screen(pathname, {
         previous_screen: previousPathname.current ?? null,
-        // Include route params for analytics (filter sensitive data if needed)
-        ...params,
       })
       previousPathname.current = pathname
     }
-  }, [pathname, params])
+  }, [pathname])
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -1001,18 +1000,11 @@ const projectToken = Constants.expoConfig?.extra?.posthogProjectToken as string 
 const host = (Constants.expoConfig?.extra?.posthogHost as string) || 'https://us.i.posthog.com'
 const isPostHogConfigured = projectToken && projectToken !== 'phc_your_project_token_here'
 
-if (__DEV__) {
-  console.log('PostHog config:', {
-    projectToken: projectToken ? `SET` : 'NOT SET',
-    host,
-    isConfigured: isPostHogConfigured,
-  })
-}
-
-if (!isPostHogConfigured) {
+if (__DEV__ && !isPostHogConfigured) {
   console.warn(
-    'PostHog project token not configured. Analytics will be disabled. ' +
-      'Set POSTHOG_PROJECT_TOKEN in your .env file to enable analytics.'
+    'POSTHOG_PROJECT_TOKEN variable required by PostHog is missing or un-configured, ' +
+      'this causes events to be silently missed. ' +
+      'This error stops appearing once POSTHOG_PROJECT_TOKEN is configured.'
   )
 }
 
@@ -1148,6 +1140,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return true
     } catch (error) {
       console.error('Login error:', error)
+      posthog.captureException(error instanceof Error ? new Error(error.message) : new Error('Login failed'))
       return false
     }
   }

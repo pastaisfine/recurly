@@ -17,7 +17,7 @@ Keep task titles broad and job-oriented. Describe the purpose or area of work wi
 
 Before proceeding, find any existing `posthog.capture()` code. Make note of event name formatting.
 
-From the project's file list, select between 10 and 15 files that might have interesting business value for event tracking, especially conversion and churn events. Also look for additional files related to login that could be used for identifying users, along with error handling. Read the files. If a file is already well-covered by PostHog events, replace it with another option. Do not spawn subagents.
+From the project's file list, select up to 15 relevant files as available that might have interesting business value for event tracking, especially conversion and churn events. Also look for additional files related to login that could be used for identifying users, along with error handling. Read the files. If a file is already well-covered by PostHog events, replace it with another option. Do not spawn subagents.
 
 Look for opportunities to track client-side events.
 

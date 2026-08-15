@@ -3,7 +3,7 @@ title: PostHog Setup - Revise
 description: Review and fix any errors in the PostHog integration implementation
 ---
 
-Check the project for errors. Read the package.json file for any type checking or build scripts that may provide input about what to fix. Remember that you can find the source code for any dependency in the node_modules directory. Do not spawn subagents.
+Check the project for errors. Read the package.json file and run the applicable validation script after your edits (this project has a `lint` script; there is no type-check or build script to run). Remember that you can find the source code for any dependency in the node_modules directory. Do not spawn subagents.
 
 Ensure that any components created were actually used.
 
@@ -15,7 +15,7 @@ Status to report in this phase:
 
 - Finding and correcting errors
 - Report details of any errors you fix
-- Linting, building and prettying
+- Linting and prettying
 
 ---
 

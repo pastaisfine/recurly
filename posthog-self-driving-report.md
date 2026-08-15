@@ -27,7 +27,7 @@ This is a **mobile app** (posthog-react-native). Server-side product toggles are
 | Product | Status | Notes |
 |---|---|---|
 | Session Replay | Enabled, inert for mobile | Server flag is on; recordings found in probe (some sessions recording). Mobile replay requires `enableSessionRecording: true` in posthog-react-native init (or default is on). Already collecting recordings. |
-| Error Tracking | Enabled, inert for mobile | `products-enable` tool unavailable on this deploy. Follow-up: add `enableExceptionAutocapture: true` to PostHog init and turn on "Enable exception autocapture" in PostHog project settings. |
+| Error Tracking | Enabled, inert for mobile | `products-enable` tool unavailable on this deploy. Follow-up: add `errorTracking: { autocapture: true }` to PostHog init and turn on "Enable exception autocapture" in PostHog project settings. |
 | Support (Conversations) | Enabled, inert | No inbound channel connected yet. Tickets reach the inbox only once a channel is configured. Follow-up below. |
 
 ---
@@ -64,7 +64,7 @@ No connected-tool sources were selected. All external issue trackers, support de
 | Scout | Why kept |
 |---|---|
 | `signals-scout-general` | Always on — watches cross-product correlations and surfaces no specialist covers |
-| `signals-scout-product-analytics` | App explicitly tracks `subscription_expanded`, screen events, and app lifecycle — product-analytics flows are actively used |
+| `signals-scout-product-analytics` | App explicitly tracks `subscription_expanded`, `user_signed_up`/`user_signed_in`, `onboarding_completed`, screen events, and app lifecycle — product-analytics flows are actively used |
 | `signals-scout-feature-flags` | PostHog init has `preloadFeatureFlags: true` and `sendFeatureFlagEvent: true` — flags are in active use |
 | `signals-scout-observability-gaps` | Fresh project with no saved insights or dashboards yet — this scout will flag uncovered event volumes |
 | `signals-scout-anomaly-detection` | Cross-product anomaly detection useful as insights are built up over time |
@@ -73,7 +73,7 @@ No connected-tool sources were selected. All external issue trackers, support de
 
 | Scout | Reason |
 |---|---|
-| `signals-scout-error-tracking` | Covered by native `error_tracking` signal sources (intentional, not a gap) |
+| `signals-scout-error-tracking` | Partially covered — native `error_tracking` signal sources are enabled, but exception autocapture is not yet turned on in the SDK, so not fully watchable yet |
 | `signals-scout-session-replay` | Covered by native `session_replay` signal source (intentional, not a gap) |
 | `signals-scout-surveys` | No surveys in use |
 | `signals-scout-revenue-analytics` | No payment SDK — app tracks subscriptions but does not process payments |
@@ -102,14 +102,14 @@ To enable a disabled scout later: go to [Self-driving inbox](https://us.posthog.
 
 ## Custom scouts
 
-**None created.** The gap analysis found one candidate surface:
+**None created.** The gap analysis found three candidate surfaces:
 
 - **Subscription engagement** (`subscription_expanded` relative to `Application Opened`) — watchable, not covered by built-in troop (product-analytics needs saved funnels; anomaly-detection needs dashboards — neither exist yet). **Proposed and declined by user.** To add it later, ask Claude to create a `signals-scout-subscription-engagement` scout.
+- **Auth funnel** — watchable: the app fires `user_signed_up`, `user_signed_in`, `sign_up_failed`, and `sign_in_failed` around Clerk auth. Not covered by the built-in troop (product-analytics needs saved funnels). To add it later, ask Claude to create a `signals-scout-auth-funnel` scout.
+- **Onboarding completion** — watchable: the app fires `onboarding_completed` when a user finishes onboarding. Not covered by the built-in troop. To add it later, ask Claude to create a `signals-scout-onboarding-completion` scout.
 
 Surfaces considered and ruled out:
-- **Auth funnel** — no auth success/failure events captured (Clerk handles auth but no explicit `sign_in_success` or `sign_up_failed` events are fired) → not watchable
 - **Screen navigation patterns** — covered by `signals-scout-general` and `signals-scout-observability-gaps` → not a genuine gap
-- **Onboarding completion** — no completion event captured (only `$screen` for the onboarding path) → not watchable
 
 **Noise escape hatch:** if a scout turns out noisy, set `emit: false` on its config in PostHog to switch it to dry-run mode.
 
@@ -150,7 +150,7 @@ Replay Vision scanners are LLMs that watch individual session recordings on a sc
 
 ## Follow-ups
 
-- [ ] **Enable error tracking in the mobile SDK** — add `enableExceptionAutocapture: true` to the PostHog init in `src/config/posthog.ts`, and turn on "Enable exception autocapture" under PostHog project Settings → Error tracking. Once enabled, the `error_tracking` signal sources (already wired) will start producing inbox findings.
+- [ ] **Enable error tracking in the mobile SDK** — add `errorTracking: { autocapture: true }` to the PostHog init in `src/config/posthog.ts`, and turn on "Enable exception autocapture" under PostHog project Settings → Error tracking. Once enabled, the `error_tracking` signal sources (already wired) will start producing inbox findings.
 - [ ] **Connect a Support inbound channel** — go to PostHog → Support / Conversations → Connect a channel (email, inbox widget, or Slack). Once connected, the `conversations/ticket` signal source (already enabled) will start routing tickets to the inbox.
 - [ ] **Create product analytics insights** — the `signals-scout-product-analytics` and `signals-scout-anomaly-detection` scouts read saved funnels and dashboards. Set up at least one funnel (e.g. screen `/onboarding` → screen `/(tabs)`) and a trends dashboard so they have data to watch.
 - [ ] **Verify Replay Vision scanner quota** — use `vision-scanners-estimate-create` (or check PostHog → Replay Vision → Quota) once recordings start matching the scanners' queries. Both scanners are narrowly scoped so spend should be minimal.

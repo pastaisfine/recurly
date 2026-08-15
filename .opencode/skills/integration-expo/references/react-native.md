@@ -19,7 +19,7 @@ Terminal
 PostHog AI
 
 ```bash
-npx expo install posthog-react-native expo-file-system expo-application expo-device expo-localization
+npx expo install posthog-react-native expo-file-system expo-application expo-device expo-localization react-native-svg
 ```
 
 #### React Native apps
@@ -40,7 +40,7 @@ If you're using [React Native Web](https://github.com/necolas/react-native-web) 
 
 ### Configuration
 
-#### With the PosthogProvider
+#### With the PostHogProvider
 
 The recommended way to set up PostHog for React Native is to use the `PostHogProvider`. This utilizes the Context API to pass the PostHog client around, and enables [autocapture](/docs/product-analytics/autocapture.md).
 
@@ -81,7 +81,7 @@ const MyComponent = () => {
 }
 ```
 
-#### Without the PosthogProvider
+#### Without the PostHogProvider
 
 If you prefer not to use the provider, you can initialize PostHog in its own file and import the instance from there:
 
@@ -364,8 +364,13 @@ React Native
 PostHog AI
 
 ```jsx
+import { useEffect } from 'react'
+import { usePostHog } from 'posthog-react-native'
+
 const posthog = usePostHog() // use the usePostHog hook if using the PostHogProvider or your own custom posthog instance
-posthog.screen(pathname, params)
+useEffect(() => {
+  posthog.screen(pathname, params)
+}, [posthog, pathname, params])
 ```
 
 #### Manually capturing screen capture events
@@ -689,7 +694,7 @@ posthog.register({
 
 The call above ensures that every event sent by the user will include `"icecream pref": "vanilla"` and `"team_id": 22`. This way, if you filtered events by property using `icecream_pref = vanilla`, it would display all events captured on that user after the `posthog.register` call, since they all include the specified Super Property.
 
-This does **not** set the user's properties. This only sets the properties for their events. To store person properties, see the [setting person properties section](#setting-user-properties).
+This does **not** set the user's properties. This only sets the properties for their events. To store person properties, see the [setting person properties section](#setting-person-properties).
 
 ### Removing stored super properties
 
@@ -1278,7 +1283,7 @@ posthog.debug()
 
 ## Disabling for local development
 
-You may want to disable PostHog when working locally or in a test environment. You can do this by setting the `disable` option to `true` when initializing PostHog. Helpfully this allows you to continue using `usePostHog` and safely calling it without anything actually happening.
+You may want to disable PostHog when working locally or in a test environment. You can do this by setting the `disabled` option to `true` when initializing PostHog. Helpfully this allows you to continue using `usePostHog` and safely calling it without anything actually happening.
 
 React Native
 

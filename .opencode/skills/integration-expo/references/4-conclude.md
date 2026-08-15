@@ -58,7 +58,7 @@ A trends insight with a breakdown (breakdowns go in `breakdownFilter.breakdowns`
 }
 ```
 
-A conversion funnel (the window fields are camelCase and live INSIDE `funnelsFilter` — not at the top level of `FunnelsQuery`, and not snake_case):
+A conversion funnel (the window fields are camelCase and live INSIDE `funnelsFilter` — not at the top level of `FunnelsQuery`, and not snake_case). The `series` event names below are placeholders — replace every one with the exact event names you implemented, as listed in `.posthog-events.json` (search for it as instructed below), not the event names shown here. Keep the funnel structure and configuration as-is:
 
 ```json
 {
@@ -69,8 +69,8 @@ A conversion funnel (the window fields are camelCase and live INSIDE `funnelsFil
     "source": {
       "kind": "FunnelsQuery",
       "series": [
-        { "kind": "EventsNode", "event": "page_viewed" },
-        { "kind": "EventsNode", "event": "user_signed_up" }
+        { "kind": "EventsNode", "event": "<event_name_from_posthog_events_json>" },
+        { "kind": "EventsNode", "event": "<event_name_from_posthog_events_json>" }
       ],
       "dateRange": { "date_from": "-30d" },
       "funnelsFilter": {
@@ -113,7 +113,7 @@ We've built some insights and a dashboard for you to keep an eye on user behavio
 
 ### Agent skill
 
-We've left an agent skill folder in your project. You can use this context for further agent development when using Claude Code. This will help ensure the model provides the most up-to-date approaches for integrating PostHog.
+We've left an agent skill folder in your project. You can use this context for further agent development when using opencode. This will help ensure the model provides the most up-to-date approaches for integrating PostHog.
 
 </wizard-report>
 
