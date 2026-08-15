@@ -1,3 +1,4 @@
+import { useUser } from "@clerk/expo";
 import { HOME_BALANCE, HOME_SUBSCRIPTIONS, HOME_USER, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
 import { icons } from "@/constants/icons";
 import images from "@/constants/images";
@@ -14,6 +15,7 @@ const SafeAreaView = styled(RNSafeAreaView)
 
 
 export default function App() {
+  const { user } = useUser();
   const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>(null);
 
   return (
@@ -24,8 +26,8 @@ export default function App() {
           <>
             <View className="home-header">
               <View className="home-user">
-                <Image source={images.avatar} className="home-avatar" />
-                <Text className="home-user-name">{HOME_USER.name}</Text>
+                <Image source={user?.hasImage ? { uri: user.imageUrl } : images.avatar} className="home-avatar" />
+                <Text className="home-user-name">{user?.fullName ?? HOME_USER.name}</Text>
               </View>
               <Image source={icons.add} className="home-add-icon" />
             </View>

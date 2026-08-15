@@ -26,17 +26,17 @@ const Settings = () => {
 
   return (
     <SafeAreaView className="flex-1 gap-6 bg-background p-5">
-      <Text className="text-2xl font-sans-bold text-primary">Settings</Text>
-      <Text className="text-base font-sans-medium text-muted-foreground">
+      <Text className="screen-title">Settings</Text>
+      <Text className="auth-subtitle">
         {user?.primaryEmailAddress?.emailAddress}
       </Text>
-      {signOutError && <Text className="text-sm font-sans-semibold text-destructive">{signOutError}</Text>}
+      {signOutError && <Text className="auth-error">{signOutError}</Text>}
       <Pressable
         onPress={handleSignOut}
         disabled={signingOut}
-        className="items-center rounded-full bg-primary py-4"
+        className="auth-button"
       >
-        <Text className="font-sans-bold text-background">
+        <Text className="auth-button-text">
           {signingOut ? "Signing out…" : "Sign out"}
         </Text>
       </Pressable>
