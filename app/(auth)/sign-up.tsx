@@ -63,18 +63,18 @@ const SignUp = () => {
   };
 
   return (
-    <View className="flex-1 justify-center gap-6 bg-background p-6">
-      <View className="gap-2">
-        <Text className="text-3xl font-sans-bold text-primary">Create account</Text>
-        <Text className="text-base font-sans-medium text-muted-foreground">
+    <View className="auth-container">
+      <View className="auth-header">
+        <Text className="auth-title">Create account</Text>
+        <Text className="auth-subtitle">
           We{"'"}ll email you a verification code.
         </Text>
       </View>
 
       {isVerifying ? (
-        <View className="gap-3">
+        <View className="auth-fields">
           <TextInput
-            className="rounded-2xl border border-border bg-card p-4 text-base font-sans-medium text-primary"
+            className="auth-input"
             value={code}
             placeholder="Verification code"
             placeholderTextColor="#00000099"
@@ -83,9 +83,9 @@ const SignUp = () => {
           />
         </View>
       ) : (
-        <View className="gap-3">
+        <View className="auth-fields">
           <TextInput
-            className="rounded-2xl border border-border bg-card p-4 text-base font-sans-medium text-primary"
+            className="auth-input"
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
@@ -95,7 +95,7 @@ const SignUp = () => {
             onChangeText={setEmailAddress}
           />
           <TextInput
-            className="rounded-2xl border border-border bg-card p-4 text-base font-sans-medium text-primary"
+            className="auth-input"
             value={password}
             placeholder="Password"
             placeholderTextColor="#00000099"
@@ -105,23 +105,23 @@ const SignUp = () => {
         </View>
       )}
 
-      {error && <Text className="text-sm font-sans-semibold text-destructive">{error}</Text>}
+      {error && <Text className="auth-error">{error}</Text>}
 
       <Pressable
         onPress={isVerifying ? handleVerify : handleSignUp}
         disabled={pending}
-        className="items-center rounded-full bg-primary py-4"
+        className="auth-button"
       >
-        <Text className="font-sans-bold text-background">
+        <Text className="auth-button-text">
           {pending ? "Please wait…" : isVerifying ? "Verify" : "Sign up"}
         </Text>
       </Pressable>
 
-      <View className="flex-row justify-center gap-1">
-        <Text className="text-sm font-sans-medium text-muted-foreground">
+      <View className="auth-footer">
+        <Text className="auth-footer-text">
           Already have an account?
         </Text>
-        <Link href="/sign-in" className="text-sm font-sans-semibold text-accent">
+        <Link href="/sign-in" className="auth-link">
           Sign in
         </Link>
       </View>

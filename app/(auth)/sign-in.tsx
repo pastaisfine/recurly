@@ -35,17 +35,17 @@ const SignIn = () => {
   };
 
   return (
-    <View className="flex-1 justify-center gap-6 bg-background p-6">
-      <View className="gap-2">
-        <Text className="text-3xl font-sans-bold text-primary">Welcome back</Text>
-        <Text className="text-base font-sans-medium text-muted-foreground">
+    <View className="auth-container">
+      <View className="auth-header">
+        <Text className="auth-title">Welcome back</Text>
+        <Text className="auth-subtitle">
           Sign in to continue to your subscriptions.
         </Text>
       </View>
 
-      <View className="gap-3">
+      <View className="auth-fields">
         <TextInput
-          className="rounded-2xl border border-border bg-card p-4 text-base font-sans-medium text-primary"
+          className="auth-input"
           autoCapitalize="none"
           autoComplete="email"
           keyboardType="email-address"
@@ -55,7 +55,7 @@ const SignIn = () => {
           onChangeText={setEmailAddress}
         />
         <TextInput
-          className="rounded-2xl border border-border bg-card p-4 text-base font-sans-medium text-primary"
+          className="auth-input"
           value={password}
           placeholder="Password"
           placeholderTextColor="#00000099"
@@ -64,23 +64,23 @@ const SignIn = () => {
         />
       </View>
 
-      {error && <Text className="text-sm font-sans-semibold text-destructive">{error}</Text>}
+      {error && <Text className="auth-error">{error}</Text>}
 
       <Pressable
         onPress={handleSignIn}
         disabled={pending}
-        className="items-center rounded-full bg-primary py-4"
+        className="auth-button"
       >
-        <Text className="font-sans-bold text-background">
+        <Text className="auth-button-text">
           {pending ? "Signing in…" : "Sign in"}
         </Text>
       </Pressable>
 
-      <View className="flex-row justify-center gap-1">
-        <Text className="text-sm font-sans-medium text-muted-foreground">
+      <View className="auth-footer">
+        <Text className="auth-footer-text">
           Don{"'"}t have an account?
         </Text>
-        <Link href="/sign-up" className="text-sm font-sans-semibold text-accent">
+        <Link href="/sign-up" className="auth-link">
           Sign up
         </Link>
       </View>
